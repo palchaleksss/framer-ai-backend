@@ -1,6 +1,7 @@
-# main.py
+# main.py (или app.py)
 from dotenv import load_dotenv
 load_dotenv()
+
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,14 +10,12 @@ from anthropic import Anthropic
 
 app = FastAPI()
 
-# Разрешаем запросы с домена сайта на Framer
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешаем отовсюду
-    allow_origin_regex=".*",  # Разрешаем любые регулярные выражения доменов (включая фреймы)
+    allow_origins=["*"],  # Разрешаем запросы отовсюду
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Разрешаем любые методы (POST, GET и т.д.)
+    allow_headers=["*"],  # Разрешаем любые заголовки
 )
 
 client = Anthropic()  # ключ берется из переменной окружения ANTHROPIC_API_KEY
@@ -32,12 +31,10 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-    # Безопасно собираем историю сообщений
     messages = []
     for m in req.history:
         messages.append({"role": m["role"], "content": m["content"]})
     
-    # Добавляем текущее сообщение пользователя
     messages.append({"role": "user", "content": req.message})
 
     response = client.messages.create(
