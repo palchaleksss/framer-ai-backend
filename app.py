@@ -29,18 +29,34 @@ class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
 
+import traceback
+
 @app.post("/chat")
 def chat(req: ChatRequest):
-    messages = []
-    for m in req.history:
-        messages.append({"role": m["role"], "content": m["content"]})
-    
-    messages.append({"role": "user", "content": req.message})
+    try:
+        messages = []
+        for m in req.history:
+            if isinstance(m, dict) and "role" in m and "content" in m:
+                messages.append({"role": m["role"], "content": m["content"]})
+        
+        messages.append({"role": "user", "content": req.message})
 
-    response = client.messages.create(
-        model="claude-sonnet-5",
-        max_tokens=512,
-        system=SYSTEM_PROMPT,
-        messages=messages
-    )
-    return {"reply": response.content[0].text}
+        response = client.messages.create(
+            model="claude-sonnet-5",
+            max_tokens=512,
+            system=SYSTEM_PROMPT,
+            messages=messages
+        )
+        
+        # Безопасно извлекаем текст ответа
+        if response.content and hasattr(response.content[0], "text"):
+            reply_text = response.content[0].text
+        else:
+            reply_text = "I'm sorry, I couldn't process that request. Please call our office directly."
+
+        return {"reply": reply_text}
+        
+    except Exception as e:
+        print("--- ERROR IN CHAT ENDPOINT ---")
+        traceback.print_exc()
+        return {"reply": "I am having trouble connecting right now. Please call Brightside Dental directly."}
