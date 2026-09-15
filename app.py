@@ -12,7 +12,8 @@ app = FastAPI()
 # Разрешаем запросы с домена сайта на Framer
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешаем запросы абсолютно отовсюду
+    allow_origins=["*"],  # Разрешаем отовсюду
+    allow_origin_regex=".*",  # Разрешаем любые регулярные выражения доменов (включая фреймы)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
