@@ -1,4 +1,6 @@
 # main.py
+from dotenv import load_dotenv
+load_dotenv()
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,15 +9,16 @@ from anthropic import Anthropic
 
 app = FastAPI()
 
-# Разрешаем запросы с домена твоего сайта на Framer
+# Разрешаем запросы с домена сайта на Framer
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://твой-сайт.framer.website"],  # точный домен Framer
-    allow_methods=["POST"],
+    allow_origins=["https://brightside-dental.framer.website"],
+    allow_credentials=True,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-client = Anthropic()  # ключ из переменной окружения ANTHROPIC_API_KEY
+client = Anthropic()  # ключ берется из переменной окружения ANTHROPIC_API_KEY
 
 SYSTEM_PROMPT = """You are a friendly assistant for Brightside Dental, a dental clinic.
 Help visitors with appointments, services (check-up & cleaning, teeth whitening,
@@ -30,7 +33,7 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 def chat(req: ChatRequest):
     response = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-3-5-sonnet-20241022",
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         messages=[
