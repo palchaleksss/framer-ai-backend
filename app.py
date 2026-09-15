@@ -36,7 +36,7 @@ class ChatRequest(BaseModel):
 def chat(req: ChatRequest):
     response = client.messages.create(
         model="claude-sonnet-5",
-        max_tokens=1024,
+        max_tokens=512,
         system=SYSTEM_PROMPT,
         messages=[
             *[{"role": m["role"], "content": m["content"]} for m in req.history],
