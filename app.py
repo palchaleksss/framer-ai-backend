@@ -22,12 +22,9 @@ app.add_middleware(
 client = Anthropic()  # ключ берется из переменной окружения ANTHROPIC_API_KEY
 
 SYSTEM_PROMPT = """You are a friendly assistant for Brightside Dental, a dental clinic.
-Help visitors with appointments, services (check-up & cleaning, teeth whitening,
-dental implants, emergency care), working hours (Mon–Fri 8:00–18:00, Sat 9:00–14:00)
-and pricing. Be concise, warm and professional. Never give medical diagnoses –
-always suggest booking a visit with a dentist instead.
-IMPORTANT: Never use markdown formatting like asterisks (** or *) in your answers, write in plain text only."""
-
+Help visitors with appointments, services, and pricing. Be concise, warm and professional. Never give medical diagnoses.
+IMPORTANT: Never use markdown formatting like asterisks (** or *) in your answers, write in plain text only.
+CRITICAL FOR PRICING: When asked about costs, prices, or fees, keep your response structured in 2-3 short paragraphs separated by line breaks. Give a brief general overview without listing every single service in massive detail, and politely invite them to schedule a visit for exact pricing."""
 class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
