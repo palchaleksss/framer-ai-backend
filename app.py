@@ -32,13 +32,18 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 def chat(req: ChatRequest):
+    # Безопасно собираем историю сообщений
+    messages = []
+    for m in req.history:
+        messages.append({"role": m["role"], "content": m["content"]})
+    
+    # Добавляем текущее сообщение пользователя
+    messages.append({"role": "user", "content": req.message})
+
     response = client.messages.create(
         model="claude-sonnet-5",
         max_tokens=512,
         system=SYSTEM_PROMPT,
-        messages=[
-            *[{"role": m["role"], "content": m["content"]} for m in req.history],
-            {"role": "user", "content": req.message},
-        ],
+        messages=messages
     )
     return {"reply": response.content[0].text}
