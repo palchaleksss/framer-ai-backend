@@ -34,7 +34,7 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 def chat(req: ChatRequest):
     response = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-sonnet-5",
         max_tokens=1024,
         system=SYSTEM_PROMPT,
         messages=[
