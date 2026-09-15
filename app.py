@@ -12,7 +12,7 @@ app = FastAPI()
 # Разрешаем запросы с домена сайта на Framer
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://brightside-dental.framer.website"],
+    allow_origins=["*"],  # Разрешаем запросы абсолютно отовсюду
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
