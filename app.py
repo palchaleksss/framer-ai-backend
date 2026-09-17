@@ -7,13 +7,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from anthropic import Anthropic
-import traceback
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешаем запросы отовсюду (в продакшене можно указать домен Фреймера)
+    allow_origins=["*"],  # Разрешаем запросы отовсюду
     allow_credentials=True,
     allow_methods=["*"],  # Разрешаем любые методы (POST, GET и т.д.)
     allow_headers=["*"],  # Разрешаем любые заголовки
@@ -30,6 +29,8 @@ class ChatRequest(BaseModel):
     message: str
     history: list[dict] = []
 
+import traceback
+
 @app.post("/chat")
 def chat(req: ChatRequest):
     try:
@@ -38,16 +39,16 @@ def chat(req: ChatRequest):
             if isinstance(m, dict) and "role" in m and "content" in m:
                 messages.append({"role": m["role"], "content": m["content"]})
         
-        # Добавляем сообщение пользователя (сюда прилетит и фраза про appointment с кнопки)
         messages.append({"role": "user", "content": req.message})
 
         response = client.messages.create(
-            model="claude-3-5-haiku-latest",  # Актуальное и точное название модели Haiku в API Anthropic
+            model="claude-haiku-4-5",
             max_tokens=512,
             system=SYSTEM_PROMPT,
             messages=messages
         )
         
+        # Безопасно извлекаем текст ответа
         if response.content and hasattr(response.content[0], "text"):
             reply_text = response.content[0].text
         else:
