@@ -42,7 +42,7 @@ def chat(req: ChatRequest):
         messages.append({"role": "user", "content": req.message})
 
         response = client.messages.create(
-            model="claude-3-5-haiku-20241022",  # Актуальное и точное название модели Haiku в API Anthropic
+            model="claude-3-5-haiku-latest",  # Актуальное и точное название модели Haiku в API Anthropic
             max_tokens=512,
             system=SYSTEM_PROMPT,
             messages=messages
